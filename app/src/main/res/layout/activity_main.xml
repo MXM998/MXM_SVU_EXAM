@@ -29,7 +29,7 @@
         android:id="@+id/tvDeveloper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Developed by MXM"
+        android:text="Developed by MXM \n       0998942815"
         android:textColor="#60FFFFFF"
         android:textSize="10sp"
         android:padding="4dp"
