@@ -1,24 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ألوان نيون مستقبلية -->
-    <color name="cyber_blue">#00D4FF</color>
-    <color name="neon_pink">#FF00FF</color>
-    <color name="matrix_green">#00FF88</color>
-    <color name="electric_purple">#8A2BE2</color>
-    <color name="hologram_teal">#20B2AA</color>
 
-    <!-- خلفيات شفافة -->
-    <color name="glass_dark">#80111133</color>
-    <color name="glass_light">#80FFFFFF</color>
-    <color name="glass_blue">#8000D4FF</color>
-    <color name="glass_purple">#808A2BE2</color>
-
-    <!-- ألوان النص -->
-    <color name="text_cyber">#E0E0FF</color>
-    <color name="text_neon">#FFFFFF</color>
-    <color name="text_glow">#00FF88</color>
-
-    <!-- خلفيات متدرجة -->
-    <color name="bg_dark_space">#0A0A1A</color>
-    <color name="bg_deep_space">#151530</color>
 </resources>

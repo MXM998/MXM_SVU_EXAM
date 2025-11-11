@@ -1,14 +1,9 @@
 package com.mxm_svu_exam;
 
-
-
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvMinWithoutHelp, tvMinWithHelp, tvResult, tvResultMessage;
     private Button btnCalculateMin, btnCalculateFinal;
     private View indicatorSuccess, indicatorWarning, indicatorError;
-    private CardView resultCard;
+    private CardView cardResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
         setupListeners();
-        setupAnimations();
     }
 
     private void initializeViews() {
@@ -45,47 +39,12 @@ public class MainActivity extends AppCompatActivity {
         indicatorSuccess = findViewById(R.id.indicatorSuccess);
         indicatorWarning = findViewById(R.id.indicatorWarning);
         indicatorError = findViewById(R.id.indicatorError);
+        cardResult = findViewById(R.id.cardResult);
     }
 
     private void setupListeners() {
-        btnCalculateMin.setOnClickListener(v -> {
-            animateButton(btnCalculateMin);
-            calculateMinimumGrades();
-        });
-
-        btnCalculateFinal.setOnClickListener(v -> {
-            animateButton(btnCalculateFinal);
-            calculateFinalResult();
-        });
-    }
-
-    private void setupAnimations() {
-        // تأثير توهج متقطع للعناصر
-        startPulseAnimation(tvResult);
-    }
-
-    private void animateButton(Button button) {
-        ValueAnimator animator = ValueAnimator.ofFloat(1f, 0.8f, 1f);
-        animator.setDuration(200);
-        animator.addUpdateListener(animation -> {
-            float scale = (float) animation.getAnimatedValue();
-            button.setScaleX(scale);
-            button.setScaleY(scale);
-        });
-        animator.start();
-    }
-
-    private void startPulseAnimation(View view) {
-        ValueAnimator animator = ValueAnimator.ofFloat(1f, 1.1f, 1f);
-        animator.setDuration(2000);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setRepeatMode(ValueAnimator.REVERSE);
-        animator.addUpdateListener(animation -> {
-            float scale = (float) animation.getAnimatedValue();
-            view.setScaleX(scale);
-            view.setScaleY(scale);
-        });
-        animator.start();
+        btnCalculateMin.setOnClickListener(v -> calculateMinimumGrades());
+        btnCalculateFinal.setOnClickListener(v -> calculateFinalResult());
     }
 
     private void calculateMinimumGrades() {
@@ -101,13 +60,13 @@ public class MainActivity extends AppCompatActivity {
             double assignmentGrade = Double.parseDouble(assignmentText);
 
             if (assignmentGrade < 0 || assignmentGrade > 100) {
-                tvMinWithoutHelp.setText("ERROR");
-                tvMinWithHelp.setText("ERROR");
+                tvMinWithoutHelp.setText("خطأ");
+                tvMinWithHelp.setText("خطأ");
                 return;
             }
 
             double minWithoutHelp = (60 - (assignmentGrade * 0.25)) / 0.75;
-            double minWithHelp = (57 - (assignmentGrade * 0.25)) / 0.75;
+            double minWithHelp = ((57.01 - (assignmentGrade * 0.25)) / 0.75)-0.01;
 
             minWithoutHelp = Math.max(0, Math.min(100, minWithoutHelp));
             minWithHelp = Math.max(0, Math.min(100, minWithHelp));
@@ -115,12 +74,9 @@ public class MainActivity extends AppCompatActivity {
             tvMinWithoutHelp.setText(String.format("%.2f", minWithoutHelp));
             tvMinWithHelp.setText(String.format("%.2f", minWithHelp));
 
-            animateTextChange(tvMinWithoutHelp);
-            animateTextChange(tvMinWithHelp);
-
         } catch (NumberFormatException e) {
-            tvMinWithoutHelp.setText("ERROR");
-            tvMinWithHelp.setText("ERROR");
+            tvMinWithoutHelp.setText("خطأ");
+            tvMinWithHelp.setText("خطأ");
         }
     }
 
@@ -129,9 +85,7 @@ public class MainActivity extends AppCompatActivity {
         String examText = etExam.getText().toString();
 
         if (TextUtils.isEmpty(assignmentText) || TextUtils.isEmpty(examText)) {
-            tvResult.setText("0.00");
-            tvResultMessage.setText("Please enter all marks first");
-            resetIndicators();
+            showResult(0, "أدخل جميع العلامات أولاً");
             return;
         }
 
@@ -140,38 +94,35 @@ public class MainActivity extends AppCompatActivity {
             double examGrade = Double.parseDouble(examText);
 
             if (assignmentGrade < 0 || assignmentGrade > 100 || examGrade < 0 || examGrade > 100) {
-                tvResult.setText("ERROR");
-                tvResultMessage.setText("Marks must be between 0 and 100");
-                resetIndicators();
+                showResult(0, "العلامات يجب أن تكون بين 0 و 100");
                 return;
             }
 
             double finalGrade = (assignmentGrade * 0.25) + (examGrade * 0.75);
-
-            tvResult.setText(String.format("%.2f", finalGrade));
-            animateTextChange(tvResult);
-
-            if (finalGrade >= 60) {
-                // Success - Green
-                tvResultMessage.setText("SUCCESS! You passed without help");
-                setActiveIndicator(indicatorSuccess, Color.GREEN);
-                animateColorChange(tvResult, Color.parseColor("#00FF88"));
-            } else if (finalGrade >= 57 && finalGrade < 60) {
-                // Warning - Pink
-                tvResultMessage.setText("SUCCESS WITH HELP! Congratulations");
-                setActiveIndicator(indicatorWarning, Color.MAGENTA);
-                animateColorChange(tvResult, Color.parseColor("#FF00FF"));
-            } else {
-                // Error - Blue
-                tvResultMessage.setText("FAILED! Better luck next time");
-                setActiveIndicator(indicatorError, Color.CYAN);
-                animateColorChange(tvResult, Color.parseColor("#00D4FF"));
-            }
+            showResult(finalGrade, getResultMessage(finalGrade));
 
         } catch (NumberFormatException e) {
-            tvResult.setText("ERROR");
-            tvResultMessage.setText("Input error - check your marks");
-            resetIndicators();
+            showResult(0, "خطأ في إدخال البيانات");
+        }
+    }
+
+    private void showResult(double finalGrade, String message) {
+        tvResult.setText(String.format("%.2f", finalGrade));
+        tvResultMessage.setText(message);
+
+        resetIndicators();
+
+        if (finalGrade >= 60) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#1A7ADAA5"));
+        } else if (finalGrade >= 57.001 && finalGrade < 60) {
+            indicatorWarning.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#1AE1AA36"));
+        } else if (finalGrade > 0) {
+            indicatorError.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#1A239BA7"));
+        } else {
+            cardResult.setCardBackgroundColor(Color.parseColor("#1E1E2E"));
         }
     }
 
@@ -181,39 +132,15 @@ public class MainActivity extends AppCompatActivity {
         indicatorError.setAlpha(0.3f);
     }
 
-    private void setActiveIndicator(View indicator, int color) {
-        resetIndicators();
-        indicator.setAlpha(1f);
-
-        // تأثير توهج للمؤشر النشط
-        ValueAnimator animator = ValueAnimator.ofFloat(0.7f, 1f);
-        animator.setDuration(1000);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setRepeatMode(ValueAnimator.REVERSE);
-        animator.addUpdateListener(animation -> {
-            float alpha = (float) animation.getAnimatedValue();
-            indicator.setAlpha(alpha);
-        });
-        animator.start();
-    }
-
-    private void animateTextChange(TextView textView) {
-        ValueAnimator animator = ValueAnimator.ofFloat(1f, 1.3f, 1f);
-        animator.setDuration(300);
-        animator.addUpdateListener(animation -> {
-            float scale = (float) animation.getAnimatedValue();
-            textView.setScaleX(scale);
-            textView.setScaleY(scale);
-        });
-        animator.start();
-    }
-
-    private void animateColorChange(TextView textView, int newColor) {
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),
-                textView.getCurrentTextColor(), newColor);
-        colorAnimation.setDuration(500);
-        colorAnimation.addUpdateListener(animator ->
-                textView.setTextColor((Integer) animator.getAnimatedValue()));
-        colorAnimation.start();
+    private String getResultMessage(double finalGrade) {
+        if (finalGrade >= 60) {
+            return "مبروك! لقد نجحت 🎉";
+        } else if (finalGrade >= 57.001 && finalGrade < 60) {
+            return "نجاح بمساعدة - أحسنت العمل!";
+        } else if (finalGrade > 0) {
+            return "لم تحقق النجاح - حاول مرة أخرى 💪";
+        } else {
+            return "أدخل العلامات لحساب النتيجة";
+        }
     }
 }
