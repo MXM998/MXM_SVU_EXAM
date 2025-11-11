@@ -1,9 +1,11 @@
 package com.mxm_svu_exam;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
         setContentView(R.layout.activity_main);
 
         initializeViews();
@@ -65,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            double minWithoutHelp = (60 - (assignmentGrade * 0.25)) / 0.75;
+            if (assignmentGrade >= 0 && assignmentGrade < 40) {
+                tvMinWithoutHelp.setText("لن تتأهل للفحص");
+                tvMinWithHelp.setText("لن تتأهل للفحص");
+                return;
+            }
+
+            double minWithoutHelp = ((59.01 - (assignmentGrade * 0.25)) / 0.75) +0.01;
             double minWithHelp = ((57.01 - (assignmentGrade * 0.25)) / 0.75)-0.01;
 
             minWithoutHelp = Math.max(0, Math.min(100, minWithoutHelp));
@@ -112,10 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
         resetIndicators();
 
-        if (finalGrade >= 60) {
+        if (finalGrade >= 59.01) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1A7ADAA5"));
-        } else if (finalGrade >= 57.001 && finalGrade < 60) {
+        } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
             indicatorWarning.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1AE1AA36"));
         } else if (finalGrade > 0) {
@@ -133,9 +147,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getResultMessage(double finalGrade) {
-        if (finalGrade >= 60) {
+        if (finalGrade >= 59.01) {
             return "مبروك! لقد نجحت 🎉";
-        } else if (finalGrade >= 57.001 && finalGrade < 60) {
+        } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
             return "نجاح بمساعدة - أحسنت العمل!";
         } else if (finalGrade > 0) {
             return "لم تحقق النجاح - حاول مرة أخرى 💪";

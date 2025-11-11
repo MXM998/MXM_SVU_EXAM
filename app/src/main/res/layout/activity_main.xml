@@ -10,16 +10,18 @@
         android:id="@+id/tvAppTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="SVU EXAM"
-        android:textColor="#00D4FF"
-        android:textSize="32sp"
-        android:textStyle="bold"
+        android:layout_marginTop="12dp"
         android:gravity="center"
         android:shadowColor="#00D4FF"
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="20"
+        android:text="SVU EXAM"
+        android:textColor="#00D4FF"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="5dp"
             android:background="@drawable/glass_effect">
 
             <TextView
@@ -195,7 +197,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="5dp"
             android:background="@drawable/glass_effect">
 
             <TextView
@@ -255,7 +257,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="5dp"
             android:background="@drawable/glass_effect"
             android:gravity="center">
 
