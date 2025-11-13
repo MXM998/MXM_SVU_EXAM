@@ -126,7 +126,19 @@ public class MainActivity extends AppCompatActivity {
 
         resetIndicators();
 
-        if (finalGrade >= 59.01) {
+        if (finalGrade <= 100 && finalGrade >= 99.01) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2AFFE100"));
+        }
+        else if (finalGrade >= 90) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2A9112BC"));
+        }
+        else if (finalGrade >= 80) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2AB6F500"));
+        }
+        else if (finalGrade >= 59.01) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1A7ADAA5"));
         } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
@@ -147,8 +159,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getResultMessage(double finalGrade) {
-        if (finalGrade >= 59.01) {
+        if (finalGrade <= 100 && finalGrade >= 99.01) {
+            return "🌟🌟🌟";
+        }
+        else if (finalGrade >= 90) {
+            return "أسطوري معدل ممتاز 🤩";
+        }
+         else if (finalGrade >= 80) {
+            return "وحش معدل عالي 😎";
+        } else if (finalGrade >= 60.01) {
             return "مبروك! لقد نجحت 🎉";
+        }
+        else if (finalGrade <= 60 && finalGrade >= 59.01) {
+            return "ال 60 أحلى من 100";
         } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
             return "نجاح بمساعدة - أحسنت العمل!";
         } else if (finalGrade > 0) {
