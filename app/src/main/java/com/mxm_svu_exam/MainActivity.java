@@ -1,5 +1,6 @@
 package com.mxm_svu_exam;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private CardView cardResult;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private void calculateFinalResult() {
         String assignmentText = etAssignment.getText().toString();
         String examText = etExam.getText().toString();
+        RestShine(cardResult);
 
         if (TextUtils.isEmpty(assignmentText) || TextUtils.isEmpty(examText)) {
             showResult(0, "أدخل جميع العلامات أولاً");
@@ -129,14 +132,17 @@ public class MainActivity extends AppCompatActivity {
         if (finalGrade <= 100 && finalGrade >= 99.01) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#2AFFE100"));
+            applyShineAnimation(cardResult);
         }
         else if (finalGrade >= 90) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#2A9112BC"));
+            applyShineAnimation(cardResult);
         }
         else if (finalGrade >= 80) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#2AB6F500"));
+            applyShineAnimation(cardResult);
         }
         else if (finalGrade >= 59.01) {
             indicatorSuccess.setAlpha(1f);
@@ -178,6 +184,31 @@ public class MainActivity extends AppCompatActivity {
             return "لم تحقق النجاح - حاول مرة أخرى 💪";
         } else {
             return "أدخل العلامات لحساب النتيجة";
+        }
+    }
+    private void applyShineAnimation(CardView vv) {
+
+        ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(
+                vv,
+                "alpha",
+                1.0f,
+                0.6f,
+                1.0f
+        );
+        alphaAnim.setDuration(1500);
+        alphaAnim.setRepeatCount(ObjectAnimator.INFINITE);
+        alphaAnim.setRepeatMode(ObjectAnimator.REVERSE);
+        vv.setTag(R.id.shine_animator_tag, alphaAnim);
+        alphaAnim.start();
+
+    }
+    private void RestShine(CardView vv) {
+        vv.clearAnimation();
+        vv.setAlpha(1.0f);
+        ObjectAnimator animator = (ObjectAnimator) vv.getTag(R.id.shine_animator_tag);
+        if (animator != null && animator.isRunning()) {
+            animator.cancel();
+            vv.setTag(R.id.shine_animator_tag, null);
         }
     }
 }
