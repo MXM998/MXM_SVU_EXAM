@@ -1,5 +1,6 @@
 package com.mxm_svu_exam;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -19,6 +21,12 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCalculateMin, btnCalculateFinal;
     private View indicatorSuccess, indicatorWarning, indicatorError;
     private CardView cardResult;
+
+
+    private int developerClickCount = 0;
+    private long lastDeveloperClickTime = 0;
+    private static final int REQUIRED_CLICKS = 3;
+    private static final long MAX_CLICK_INTERVAL = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
         setupListeners();
+        setupDeveloperEasterEgg();
     }
 
     private void initializeViews() {
@@ -53,6 +62,47 @@ public class MainActivity extends AppCompatActivity {
     private void setupListeners() {
         btnCalculateMin.setOnClickListener(v -> calculateMinimumGrades());
         btnCalculateFinal.setOnClickListener(v -> calculateFinalResult());
+    }
+
+    private void setupDeveloperEasterEgg() {
+        TextView tvDeveloper = findViewById(R.id.tvDeveloper);
+
+        tvDeveloper.setOnClickListener(v -> {
+            long currentTime = System.currentTimeMillis();
+
+
+            if (currentTime - lastDeveloperClickTime > MAX_CLICK_INTERVAL) {
+                developerClickCount = 0;
+            }
+
+            lastDeveloperClickTime = currentTime;
+            developerClickCount++;
+
+            if (developerClickCount >= REQUIRED_CLICKS) {
+                showHelloWorldEffect(tvDeveloper);
+                developerClickCount = 0;
+            }
+        });
+    }
+
+    private void showHelloWorldEffect(TextView developerView) {
+        Toast.makeText(this, "@Mxm_mystery_bot", Toast.LENGTH_LONG).show();
+
+        developerView.animate()
+                .rotationBy(360f)
+                .setDuration(800)
+                .start();
+
+        ObjectAnimator shakeX = ObjectAnimator.ofFloat(developerView, "translationX", 0, 25, -25, 25, -25, 15, -15, 6, -6, 0);
+        shakeX.setDuration(500);
+        shakeX.start();
+
+        int originalColor = developerView.getCurrentTextColor();
+        developerView.setTextColor(Color.parseColor("#FF00FF"));
+
+        developerView.postDelayed(() -> {
+            developerView.setTextColor(originalColor);
+        }, 1000);
     }
 
     private void calculateMinimumGrades() {
@@ -97,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     private void calculateFinalResult() {
         String assignmentText = etAssignment.getText().toString();
         String examText = etExam.getText().toString();
+        RestShine(cardResult);
 
         if (TextUtils.isEmpty(assignmentText) || TextUtils.isEmpty(examText)) {
             showResult(0, "أدخل جميع العلامات أولاً");
@@ -126,12 +177,31 @@ public class MainActivity extends AppCompatActivity {
 
         resetIndicators();
 
-        if (finalGrade >= 59.01) {
+        if (finalGrade <= 100 && finalGrade >= 99.01) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2AFFE100"));
+            applyShineAnimation(cardResult);
+        }
+        else if (finalGrade >= 90) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2A9112BC"));
+            applyShineAnimation(cardResult);
+        }
+        else if (finalGrade >= 80) {
+            indicatorSuccess.setAlpha(1f);
+            cardResult.setCardBackgroundColor(Color.parseColor("#2AB6F500"));
+            applyShineAnimation(cardResult);
+        }
+        else if (finalGrade >= 59.01) {
             indicatorSuccess.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1A7ADAA5"));
         } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
             indicatorWarning.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1AE1AA36"));
+            if(finalGrade < 57.01)
+            {
+                tvResult.setText(String.format("%.3f", finalGrade));
+            }
         } else if (finalGrade > 0) {
             indicatorError.setAlpha(1f);
             cardResult.setCardBackgroundColor(Color.parseColor("#1A239BA7"));
@@ -147,14 +217,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getResultMessage(double finalGrade) {
-        if (finalGrade >= 59.01) {
+        if (finalGrade <= 100 && finalGrade >= 99.01) {
+            return "🌟🌟🌟";
+        }
+        else if (finalGrade >= 90) {
+            return "أسطوري معدل ممتاز 🤩";
+        }
+        else if (finalGrade >= 80) {
+            return "وحش معدل عالي 😎";
+        } else if (finalGrade >= 60.01) {
             return "مبروك! لقد نجحت 🎉";
-        } else if (finalGrade >= 57.001 && finalGrade < 59.01) {
+        }
+        else if (finalGrade >= 59.01) {
+            return "ال 60 أحلى من 100 🌚";
+        } else if (finalGrade >= 57.001 ) {
             return "نجاح بمساعدة - أحسنت العمل!";
         } else if (finalGrade > 0) {
             return "لم تحقق النجاح - حاول مرة أخرى 💪";
         } else {
             return "أدخل العلامات لحساب النتيجة";
+        }
+    }
+    private void applyShineAnimation(CardView vv) {
+
+        ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(
+                vv,
+                "alpha",
+                1.0f,
+                0.6f,
+                1.0f
+        );
+        alphaAnim.setDuration(1500);
+        alphaAnim.setRepeatCount(ObjectAnimator.INFINITE);
+        alphaAnim.setRepeatMode(ObjectAnimator.REVERSE);
+        vv.setTag(R.id.shine_animator_tag, alphaAnim);
+        alphaAnim.start();
+
+    }
+    private void RestShine(CardView vv) {
+        vv.clearAnimation();
+        vv.setAlpha(1.0f);
+        ObjectAnimator animator = (ObjectAnimator) vv.getTag(R.id.shine_animator_tag);
+        if (animator != null && animator.isRunning()) {
+            animator.cancel();
+            vv.setTag(R.id.shine_animator_tag, null);
         }
     }
 }

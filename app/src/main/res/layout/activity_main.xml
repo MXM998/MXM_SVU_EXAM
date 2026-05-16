@@ -29,7 +29,7 @@
         android:id="@+id/tvDeveloper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Developed by MXM \n       0998942815"
+        android:text="Developed by MXM \n      0998942815"
         android:textColor="#60FFFFFF"
         android:textSize="10sp"
         android:padding="4dp"
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:inputType="numberDecimal"
-                android:hint="أدخل العلامة الوظيفة من 100"
+                android:hint="أدخل علامة الوظيفة من 100"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#00D4FF"
                 android:textSize="16sp"
@@ -94,7 +94,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- نتائج الحد الأدنى -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -180,7 +179,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- بطاقة علامة الامتحان -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardExam"
         android:layout_width="0dp"
@@ -214,7 +212,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:inputType="numberDecimal"
-                android:hint="أدخل العلامة الفحص من 100"
+                android:hint="أدخل علامة الفحص من 100"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#FF00FF"
                 android:textSize="16sp"
@@ -239,7 +237,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- بطاقة النتيجة -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardResult"
         android:layout_width="0dp"
@@ -271,7 +268,6 @@
                 android:gravity="center"
                 android:layout_marginBottom="16dp" />
 
-            <!-- دائرة النتيجة -->
             <RelativeLayout
                 android:layout_width="120dp"
                 android:layout_height="120dp"
@@ -300,7 +296,6 @@
                 android:text="أدخل العلامات لحساب النتيجة"
                 android:textColor="#E0E0FF" />
 
-            <!-- مؤشر الحالة -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
